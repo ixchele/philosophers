@@ -12,6 +12,7 @@ INCLUDES	= -I./headers/
 # LIBFT_DIR	= libft
 # LIBFT		= $(addprefix $(LIBFT_DIR)/, libft.a)
 SRC			= src/main.c \
+			  src/parse_and_init.c \
 			  src/utils/ph_atoi.c \
 			  src/utils/ph_atol.c
 OBJ			= $(patsubst src/%.c, obj/%.o, $(SRC))

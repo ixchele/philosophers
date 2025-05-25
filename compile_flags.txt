@@ -4,5 +4,5 @@
 -Werror
 -std=c11 
 -I./headers/
--I./libft/headers/
--lreadline
+-phtread
+-ccc-gcc-name=/usr/bin/gcc
