@@ -4,5 +4,3 @@
 -Werror
 -std=c11 
 -I./headers/
--phtread
--ccc-gcc-name=/usr/bin/gcc

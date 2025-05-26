@@ -13,13 +13,13 @@
 #ifndef PHILO_H
 # define PHILO_H
 
-#include <bits/pthreadtypes.h>
 # include <stdbool.h>
 # include <pthread.h>
 # include <stdlib.h>
 # include <stdio.h>
 
-# define NUMBER_OF_
+# define PRINT 0
+# define DEATH 1
 
 typedef struct s_philo
 {
@@ -29,7 +29,7 @@ typedef struct s_philo
 	long long		last_meal;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
-	pthread_mutex_t	*last_meal_mutex;
+	pthread_mutex_t	last_meal_mutex;
 	struct s_rules	*rules;
 }	t_philo;
 
@@ -43,6 +43,7 @@ typedef struct s_rules
 	bool			philo_died;
 	long long		start_time;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	*mutex;
 	pthread_mutex_t	*print_mutex;
 	pthread_mutex_t	*death_mutex;
 	t_philo			*philos;

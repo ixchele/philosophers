@@ -45,7 +45,8 @@ static bool	init_mutex(t_rules *rules)
 
 	i = 0;
 	rules->forks = malloc(sizeof(pthread_mutex_t) * rules->nb_of_philos);
-	if (!rules->forks)
+	rules->mutex = malloc(sizeof(pthread_mutex_t) * 2);
+	if (!rules->mutex || !rules->forks)
 		return (false);
 	while (i < rules->nb_of_philos)
 	{
@@ -53,8 +54,8 @@ static bool	init_mutex(t_rules *rules)
 			return (false);
 		i++;
 	}
-	if (pthread_mutex_init(rules->print_mutex, NULL)
-		|| pthread_mutex_init(rules->print_mutex, NULL))
+	if (pthread_mutex_init(&rules->mutex[PRINT], NULL)
+		|| pthread_mutex_init(&rules->mutex[DEATH], NULL))
 		return (false);
 	return (true);
 }
@@ -69,13 +70,13 @@ static bool	init_philos(t_rules *rules)
 		return (false);
 	while (i < rules->nb_of_philos)
 	{
-		rules->philos[i].id = i;
+		rules->philos[i].id = i + 1;
 		rules->philos[i].meals_eaten = 0;
 		rules->philos[i].last_meal = 0;
-		*(rules->philos[i]).left_fork = rules->forks[i];
-		*(rules->philos[i]).right_fork = rules->forks[(i + 1)
+		rules->philos[i].left_fork = &rules->forks[i];
+		rules->philos[i].right_fork = &rules->forks[(i + 1)
 			% rules->nb_of_philos];
-		if (pthread_mutex_init(rules->philos[i].last_meal_mutex, NULL))
+		if (pthread_mutex_init(&rules->philos[i].last_meal_mutex, NULL))
 			return (false);
 		rules->philos[i].rules = (t_rules *)rules;
 		i++;
@@ -86,7 +87,7 @@ static bool	init_philos(t_rules *rules)
 bool	init_all(t_rules *rules)
 {
 	rules->philo_died = false;
-	if (!init_mutex(rules) || init_philos(rules))
+	if (!init_mutex(rules) || !init_philos(rules))
 		return (false);
 	return (true);
 }
