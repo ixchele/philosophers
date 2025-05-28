@@ -5,13 +5,16 @@ RESET  		= \033[0m
 CLEAR		= \033[K\r
 NAME		= philo
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror #-g3
-FLAGS		= -pthread -fsanitize=thread -g3
+CFLAGS		= -Wall -Wextra -Werror -g3
+FLAGS		= -pthread #-fsanitize=thread -g3
 AR			= ar rcs
 INCLUDES	= -I./headers/
 # LIBFT_DIR	= libft
 # LIBFT		= $(addprefix $(LIBFT_DIR)/, libft.a)
 SRC			= src/main.c \
+			  src/ohter_funcions.c \
+			  src/philosophers_action.c \
+			  src/start_dining.c \
 			  src/parse_and_init.c \
 			  src/utils/ph_atoi.c \
 			  src/utils/ph_atol.c

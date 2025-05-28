@@ -6,13 +6,15 @@
 /*   By: zbengued <zbengued@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 17:11:29 by zbengued          #+#    #+#             */
-/*   Updated: 2025/05/24 18:17:50 by zbengued         ###   ########.fr       */
+/*   Updated: 2025/05/28 16:18:35 by zbengued         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <bits/pthreadtypes.h>
 #include <philo.h>
 #include <pthread.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 bool	parse_args(t_rules *rules, int ac, char **av)
 {
@@ -44,18 +46,25 @@ static bool	init_mutex(t_rules *rules)
 	long	i;
 
 	i = 0;
+	rules->middleman = malloc(sizeof(t_middleman));
 	rules->forks = malloc(sizeof(pthread_mutex_t) * rules->nb_of_philos);
 	rules->mutex = malloc(sizeof(pthread_mutex_t) * 2);
-	if (!rules->mutex || !rules->forks)
+	if (!rules->mutex || !rules->forks || !rules->middleman)
+		return (false);
+	rules->middleman->taken = malloc(sizeof(bool) * rules->nb_of_philos);
+	if (!rules->middleman->taken)
 		return (false);
 	while (i < rules->nb_of_philos)
 	{
 		if (pthread_mutex_init(&rules->forks[i], NULL))
 			return (false);
+		rules->middleman->forks[i] = rules->forks[i];
+		rules->middleman->taken[i] = false;
 		i++;
 	}
 	if (pthread_mutex_init(&rules->mutex[PRINT], NULL)
-		|| pthread_mutex_init(&rules->mutex[DEATH], NULL))
+		|| pthread_mutex_init(&rules->mutex[DEATH], NULL)
+		|| pthread_mutex_init(&rules->middleman->taken_mut, NULL))
 		return (false);
 	return (true);
 }

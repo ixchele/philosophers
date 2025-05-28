@@ -13,10 +13,15 @@
 #ifndef PHILO_H
 # define PHILO_H
 
+#include <bits/pthreadtypes.h>
 # include <stdbool.h>
 # include <pthread.h>
-# include <stdlib.h>
 # include <stdio.h>
+# include <stdbool.h>
+# include <stddef.h>
+# include <stdlib.h>
+# include <sys/time.h>
+# include <unistd.h>
 
 # define PRINT 0
 # define DEATH 1
@@ -30,8 +35,17 @@ typedef struct s_philo
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	last_meal_mutex;
+	bool			can_eat;
+	pthread_mutex_t can_eat_mutex;
 	struct s_rules	*rules;
 }	t_philo;
+
+typedef struct s_middleman
+{
+	pthread_mutex_t	*forks;
+	bool			*taken;
+	pthread_mutex_t	taken_mut;
+}	t_middleman;
 
 typedef struct s_rules
 {
@@ -47,12 +61,21 @@ typedef struct s_rules
 	pthread_mutex_t	*print_mutex;
 	pthread_mutex_t	*death_mutex;
 	t_philo			*philos;
+	t_middleman		*middleman;
 }	t_rules;
 
-int		ph_atoi(const char *str);
-long	ph_atol(const char *nptr);
-
-bool	parse_args(t_rules *rules, int ac, char **av);
-bool	init_all(t_rules *rules);
+long		ph_atol(const char *nptr);
+bool		check_dead_flag(t_rules *rules);
+long long	get_time(void);
+void		mark_as_dead(t_rules *rules);
+void		print_philo_action(t_philo *philo, char *action);
+void		ph_sleep(long long time_ms, t_rules *rules);
+bool		parse_args(t_rules *rules, int ac, char **av);
+bool		init_all(t_rules *rules);
+void		philo_eat(t_philo *philo);
+void		philo_sleep(t_philo *philo);
+void		philo_think(t_philo *philo);
+void		*philo_loop(void *arg);
+void		start_the_dining(t_rules *rules);
 
 #endif
