@@ -44,7 +44,9 @@ void	philo_eat(t_philo *philo)
 	philo->last_meal = get_time();
 	pthread_mutex_unlock(&philo->last_meal_mutex);
 	ph_sleep(philo->rules->time_to_eat, philo->rules);
+	pthread_mutex_lock(&philo->meal_eat_mut);
 	philo->meals_eaten++;
+	pthread_mutex_unlock(&philo->meal_eat_mut);
 	pthread_mutex_unlock(second);
 	pthread_mutex_unlock(first);
 }
@@ -79,7 +81,7 @@ void	*philo_loop(void *arg)
 	philo = (t_philo *)arg;
 	if ((philo->id % 2) != 0)
 		usleep(500);
-	while (!check_dead_flag(philo->rules))
+	while (!simulation_end(philo->rules))
 	{
 		philo_eat(philo);
 		philo_sleep(philo);
