@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include <philo.h>
-#include <pthread.h>
 
 bool	check_fullness_flag(t_rules *rules)
 {
@@ -62,23 +61,29 @@ void	mark_as_dead(t_rules *rules)
 
 void	print_philo_action(t_philo *philo, char *action)
 {
-	if (!simulation_end(philo->rules))
-	{
-		pthread_mutex_lock(&philo->rules->mutex[PRINT]);
+	// bool	died;
+
+	pthread_mutex_lock(&philo->rules->mutex[DEATH]);
+	// died = philo->rules->philo_died;
+	if (!philo->rules->philo_died)
 		printf("%lld %ld %s\n",get_time() - philo->rules->start_time, philo->id, action);
-		pthread_mutex_unlock(&philo->rules->mutex[PRINT]);
-	}
+	pthread_mutex_unlock(&philo->rules->mutex[DEATH]);
 }
 
-void	ph_sleep(long long time_ms, t_rules *rules)
+void	ph_sleep(long long time_u, t_rules *rules)
 {
 	long long	start;
+	long long	now;
 
-	start = get_time();
+	start = get_time() * 1000;
 	while (!simulation_end(rules))
 	{
-		if (get_time() - start >= time_ms)
+		now = get_time() * 1000;
+		if (now - start >= time_u)
 			break ;
-		usleep(500);
+		if (time_u - (now - start) > 1000)
+			usleep(500);
+		else
+			usleep(100);
 	}
 }

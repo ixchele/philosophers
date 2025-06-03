@@ -11,21 +11,30 @@
 /* ************************************************************************** */
 
 #include <philo.h>
+#include <pthread.h>
+#include <stdio.h>
+
+static bool	one_philo(t_philo *philo)
+{
+	if (philo->left_fork == philo->right_fork)
+	{
+		pthread_mutex_lock(philo->left_fork);
+		print_philo_action(philo, "has taken a fork");
+		ph_sleep(philo->rules->time_to_die * 1000, philo->rules);
+		pthread_mutex_unlock(philo->left_fork);
+		return (true);
+	}
+	return (false);
+}
 
 void	philo_eat(t_philo *philo)
 {
 	pthread_mutex_t *first;
 	pthread_mutex_t *second;
 
-	if (philo->left_fork == philo->right_fork)
-	{
-		pthread_mutex_lock(philo->left_fork);
-		print_philo_action(philo, "has taken a fork");
-		ph_sleep(philo->rules->time_to_die, philo->rules);
-		pthread_mutex_unlock(philo->left_fork);
+	if (one_philo(philo))
 		return ;
-	}
-	if (philo->left_fork < philo->right_fork)
+	if (philo->id % 2 == 0)
 	{
 		first = philo->left_fork;
 		second = philo->right_fork;
@@ -39,11 +48,11 @@ void	philo_eat(t_philo *philo)
 	print_philo_action(philo, "has taken a fork");
 	pthread_mutex_lock(second);
 	print_philo_action(philo, "has taken a fork");
-	print_philo_action(philo, "is eating");
 	pthread_mutex_lock(&philo->last_meal_mutex);
 	philo->last_meal = get_time();
+	print_philo_action(philo, "is eating");
 	pthread_mutex_unlock(&philo->last_meal_mutex);
-	ph_sleep(philo->rules->time_to_eat, philo->rules);
+	ph_sleep(philo->rules->time_to_eat * 1000, philo->rules);
 	pthread_mutex_lock(&philo->meal_eat_mut);
 	philo->meals_eaten++;
 	pthread_mutex_unlock(&philo->meal_eat_mut);
@@ -54,12 +63,11 @@ void	philo_eat(t_philo *philo)
 void	philo_sleep(t_philo *philo)
 {
 	print_philo_action(philo, "is sleeping");
-	ph_sleep(philo->rules->time_to_sleep, philo->rules);
+	ph_sleep(philo->rules->time_to_sleep * 1000, philo->rules);
 }
 
 void	philo_think(t_philo *philo)
 {
-	// TODO : should think the time that is left for him to die !
 	long long time_since_meal;
 	long long time_to_think;
 
@@ -71,21 +79,5 @@ void	philo_think(t_philo *philo)
 		- philo->rules->time_to_eat;
 	if (time_to_think < 0)
 		time_to_think = 0;
-	ph_sleep(time_to_think, philo->rules);
-}
-
-void	*philo_loop(void *arg)
-{
-	t_philo *philo;
-
-	philo = (t_philo *)arg;
-	if ((philo->id % 2) != 0)
-		usleep(500);
-	while (!simulation_end(philo->rules))
-	{
-		philo_eat(philo);
-		philo_sleep(philo);
-		philo_think(philo);
-	}
-	return (NULL);
+	ph_sleep(time_to_think * 1000, philo->rules);
 }

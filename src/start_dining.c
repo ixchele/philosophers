@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include <philo.h>
-#include <pthread.h>
-#include <stdio.h>
 
 bool	check_if_all_full(t_rules *rules)
 {
@@ -47,15 +45,38 @@ static void	*check_if_philo_dead_or_full(void *arg)
 			pthread_mutex_lock(&rules->philos[i].last_meal_mutex);
 			if (get_time() - rules->philos[i].last_meal > rules->time_to_die)
 			{
-				print_philo_action(&rules->philos[i], "is died");
+				// ph_sleep(500, rules);
+				print_philo_action(&rules->philos[i], "died");
 				mark_as_dead(rules);
+				// printf("%lld %ld %s\n",get_time() - rules->philos[i].rules->start_time, rules->philos[i].id, "died");
 			}
-			else if (check_if_all_full(rules))
-				mark_as_full(rules);
 			pthread_mutex_unlock(&rules->philos[i].last_meal_mutex);
 			i++;
 		}
-		usleep(1000);
+		if (check_if_all_full(rules))
+			mark_as_full(rules);
+		// ph_sleep(1000, rules);
+	}
+	return (NULL);
+}
+
+void	*philo_loop(void *arg)
+{
+	t_philo *philo;
+
+	philo = (t_philo *)arg;
+	// if ((philo->id % 2) != 0)
+	// 	usleep(500);
+	while (!simulation_end(philo->rules))
+	{
+		philo_eat(philo);
+		if (check_death_flag(philo->rules))
+			break ;
+		philo_sleep(philo);
+		if (check_death_flag(philo->rules))
+			break ;
+		philo_think(philo);
+		ph_sleep(500, philo->rules);
 	}
 	return (NULL);
 }
