@@ -6,13 +6,11 @@
 /*   By: zbengued <zbengued@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 14:38:45 by zbengued          #+#    #+#             */
-/*   Updated: 2025/05/27 14:41:26 by zbengued         ###   ########.fr       */
+/*   Updated: 2025/06/03 15:48:29 by zbengued         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
-#include <pthread.h>
-#include <stdio.h>
 
 static bool	one_philo(t_philo *philo)
 {
@@ -27,23 +25,9 @@ static bool	one_philo(t_philo *philo)
 	return (false);
 }
 
-void	philo_eat(t_philo *philo)
+static void	eating(t_philo *philo,
+			pthread_mutex_t *first, pthread_mutex_t *second)
 {
-	pthread_mutex_t *first;
-	pthread_mutex_t *second;
-
-	if (one_philo(philo))
-		return ;
-	if (philo->id % 2 == 0)
-	{
-		first = philo->left_fork;
-		second = philo->right_fork;
-	}
-	else
-	{
-		first = philo->right_fork;
-		second = philo->left_fork;
-	}
 	pthread_mutex_lock(first);
 	print_philo_action(philo, "has taken a fork");
 	pthread_mutex_lock(second);
@@ -60,6 +44,26 @@ void	philo_eat(t_philo *philo)
 	pthread_mutex_unlock(first);
 }
 
+void	philo_eat(t_philo *philo)
+{
+	pthread_mutex_t	*first;
+	pthread_mutex_t	*second;
+
+	if (one_philo(philo))
+		return ;
+	if (philo->id % 2 == 0)
+	{
+		first = philo->left_fork;
+		second = philo->right_fork;
+	}
+	else
+	{
+		first = philo->right_fork;
+		second = philo->left_fork;
+	}
+	eating(philo, first, second);
+}
+
 void	philo_sleep(t_philo *philo)
 {
 	print_philo_action(philo, "is sleeping");
@@ -68,8 +72,8 @@ void	philo_sleep(t_philo *philo)
 
 void	philo_think(t_philo *philo)
 {
-	long long time_since_meal;
-	long long time_to_think;
+	long long	time_since_meal;
+	long long	time_to_think;
 
 	print_philo_action(philo, "is thinking");
 	pthread_mutex_lock(&philo->last_meal_mutex);

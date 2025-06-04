@@ -1,18 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philosopher.h                                      :+:      :+:    :+:   */
+/*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: zbengued <zbengued@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 17:48:01 by zbengued          #+#    #+#             */
-/*   Updated: 2025/05/21 18:23:59 by zbengued         ###   ########.fr       */
+/*   Updated: 2025/06/03 16:24:32 by zbengued         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
 
+# define COLOR_BLUE "\001\033[1;34m\002"
+# define COLOR_RESET "\001\033[0m\002"
+# define COLOR_RED "\001\033[0;31m\002"
+# define COLOR_GREEN "\001\033[0;32m\002"
 # include <stdbool.h>
 # include <pthread.h>
 # include <stdio.h>
@@ -35,18 +39,9 @@ typedef struct s_philo
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	last_meal_mutex;
-	bool			can_eat;
-	pthread_mutex_t can_eat_mutex;
 	pthread_mutex_t	meal_eat_mut;
 	struct s_rules	*rules;
 }	t_philo;
-
-typedef struct s_middleman
-{
-	pthread_mutex_t	**forks;
-	bool			*taken;
-	pthread_mutex_t	taken_mut;
-}	t_middleman;
 
 typedef struct s_rules
 {
@@ -61,7 +56,6 @@ typedef struct s_rules
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*mutex;
 	t_philo			*philos;
-	t_middleman		*middleman;
 }	t_rules;
 
 long		ph_atol(const char *nptr);

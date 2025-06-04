@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include <philo.h>
-#include <pthread.h>
 
 bool	parse_args(t_rules *rules, int ac, char **av)
 {
@@ -43,27 +42,19 @@ static bool	init_mutex(t_rules *rules)
 	long	i;
 
 	i = 0;
-	rules->middleman = malloc(sizeof(t_middleman));
 	rules->forks = malloc(sizeof(pthread_mutex_t) * rules->nb_of_philos);
 	rules->mutex = malloc(sizeof(pthread_mutex_t) * 3);
-	if (!rules->mutex || !rules->forks || !rules->middleman)
-		return (false);
-	rules->middleman->taken = malloc(sizeof(bool) * rules->nb_of_philos);
-	rules->middleman->forks = malloc(sizeof(pthread_mutex_t *) * rules->nb_of_philos);
-	if (!rules->middleman->taken || !rules->middleman->forks)
+	if (!rules->mutex || !rules->forks)
 		return (false);
 	while (i < rules->nb_of_philos)
 	{
 		if (pthread_mutex_init(&rules->forks[i], NULL))
 			return (false);
-		rules->middleman->forks[i] = &rules->forks[i];
-		rules->middleman->taken[i] = false;
 		i++;
 	}
 	if (pthread_mutex_init(&rules->mutex[PRINT], NULL)
 		|| pthread_mutex_init(&rules->mutex[DEATH], NULL)
-		|| pthread_mutex_init(&rules->mutex[FULLNESS], NULL)
-		|| pthread_mutex_init(&rules->middleman->taken_mut, NULL))
+		|| pthread_mutex_init(&rules->mutex[FULLNESS], NULL))
 		return (false);
 	return (true);
 }
@@ -85,11 +76,9 @@ static bool	init_philos(t_rules *rules)
 		rules->philos[i].right_fork = &rules->forks[(i + 1)
 			% rules->nb_of_philos];
 		if (pthread_mutex_init(&rules->philos[i].last_meal_mutex, NULL)
-			|| pthread_mutex_init(&rules->philos[i].can_eat_mutex, NULL)
 			|| pthread_mutex_init(&rules->philos[i].meal_eat_mut, NULL))
 			return (false);
 		rules->philos[i].rules = (t_rules *)rules;
-		rules->philos[i].can_eat = false;
 		i++;
 	}
 	return (true);
