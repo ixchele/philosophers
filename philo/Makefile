@@ -5,7 +5,7 @@ RESET  		= \033[0m
 CLEAR		= \033[K\r
 NAME		= philo
 CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -g3
+CFLAGS		= -Wall -Wextra -Werror #-g3
 FLAGS		= -pthread #-fsanitize=thread -g3
 AR			= ar rcs
 INCLUDES	= -I./headers/

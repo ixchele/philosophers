@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <philo.h>
+#include <stddef.h>
 
 static int	ft_isdigit(int c)
 {
@@ -58,16 +59,21 @@ void	ph_sleep(long long time_u, t_rules *rules)
 {
 	long long	start;
 	long long	now;
+	// long long	delay;
+	// size_t		i;
 
+	// i = 0;
 	start = get_time() * 1000;
 	while (!simulation_end(rules))
 	{
 		now = get_time() * 1000;
+		// delay = now - start - 500 * i;
 		if (now - start >= time_u)
 			break ;
 		if (time_u - (now - start) > 1000)
 			usleep(500);
 		else
 			usleep(100);
+		// i++;
 	}
 }

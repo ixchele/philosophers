@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include <philo.h>
+#include <stdbool.h>
+#include <string.h>
 
 bool	parse_args(t_rules *rules, int ac, char **av)
 {
@@ -42,20 +44,25 @@ static bool	init_mutex(t_rules *rules)
 	long	i;
 
 	i = 0;
+	rules->forks_init = malloc(sizeof(bool) * rules->nb_of_philos);
+	if (!rules->forks_init)
+		return (false);
+	memset(rules->forks_init, 0, rules->nb_of_philos * sizeof(bool));
+	memset(rules->mutex_init, 0, 3 * sizeof(bool));
 	rules->forks = malloc(sizeof(pthread_mutex_t) * rules->nb_of_philos);
-	rules->mutex = malloc(sizeof(pthread_mutex_t) * 3);
-	if (!rules->mutex || !rules->forks)
+	if (!rules->forks)
 		return (false);
 	while (i < rules->nb_of_philos)
 	{
 		if (pthread_mutex_init(&rules->forks[i], NULL))
 			return (false);
+		rules->forks_init[i] = true;
+		if (pthread_mutex_init(&rules->mutex[i], NULL) && i < 3)
+			return (false);
+		if (i < 3)
+			rules->mutex_init[i] = true;
 		i++;
 	}
-	if (pthread_mutex_init(&rules->mutex[PRINT], NULL)
-		|| pthread_mutex_init(&rules->mutex[DEATH], NULL)
-		|| pthread_mutex_init(&rules->mutex[FULLNESS], NULL))
-		return (false);
 	return (true);
 }
 
@@ -88,6 +95,7 @@ bool	init_all(t_rules *rules)
 {
 	rules->philo_died = false;
 	rules->philo_full = false;
+	rules->philos = NULL;
 	if (!init_mutex(rules) || !init_philos(rules))
 		return (false);
 	return (true);

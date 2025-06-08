@@ -25,6 +25,7 @@
 # include <stdlib.h>
 # include <sys/time.h>
 # include <unistd.h>
+# include <semaphore.h>
 
 # define PRINT 0
 # define DEATH 1
@@ -39,7 +40,9 @@ typedef struct s_philo
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	last_meal_mutex;
+	bool			last_meal_mut_init;
 	pthread_mutex_t	meal_eat_mut;
+	bool			meal_eat_mut_init;
 	struct s_rules	*rules;
 }	t_philo;
 
@@ -54,7 +57,9 @@ typedef struct s_rules
 	bool			philo_full;
 	long long		start_time;
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	*mutex;
+	bool			*forks_init;
+	pthread_mutex_t	mutex[3];
+	bool			mutex_init[3];
 	t_philo			*philos;
 }	t_rules;
 
@@ -73,5 +78,6 @@ void		philo_sleep(t_philo *philo);
 void		philo_think(t_philo *philo);
 void		*philo_loop(void *arg);
 void		start_the_dining(t_rules *rules);
+void		destroy_all(t_rules *rules);
 
 #endif

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <philo.h>
+#include <stdio.h>
 // TODO : 
 // [x] parse_args()
 // [x] init_all()
@@ -27,26 +28,38 @@ static void	print_usage(void)
 	printf("[number_of_times_each_philosopher_must_eat])\n");
 }
 
-static void	destroy_all(t_rules *rules)
+void	safe_destroy_mutex(pthread_mutex_t *mutex, bool *init_falg)
+{
+	if (*init_falg)
+	{
+		if (!pthread_mutex_destroy(mutex))
+			printf("failed to destroy mutex\n");
+		else
+			*init_falg = false;
+	}
+}
+
+void	destroy_all(t_rules *rules)
 {
 	long	i;
 
 	i = 0;
 	while (i < 3)
 	{
-		pthread_mutex_destroy(&rules->mutex[i]);
+		safe_destroy_mutex(&rules->mutex[i], &rules->mutex_init[i]);
 		i++;
 	}
 	i = 0;
 	while (i < rules->nb_of_philos)
 	{
-		pthread_mutex_destroy(&rules->forks[i]);
-		pthread_mutex_destroy(&rules->philos[i].meal_eat_mut);
-		pthread_mutex_destroy(&rules->philos[i].last_meal_mutex);
+		safe_destroy_mutex(&rules->forks[i], &rules->forks_init[i]);
+		safe_destroy_mutex(&rules->philos[i].meal_eat_mut,
+				&rules->philos[i].meal_eat_mut_init);
+		safe_destroy_mutex(&rules->philos[i].last_meal_mutex,
+				&rules->philos[i].last_meal_mut_init);
 		i++;
 	}
 	free(rules->forks);
-	free(rules->mutex);
 	free(rules->philos);
 }
 
