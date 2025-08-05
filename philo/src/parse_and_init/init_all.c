@@ -62,8 +62,6 @@ void	init_data(t_program *data)
 	if (!data->forks)
 		exit_when_error("Malloc error !\n");
 	while (++i < data->philo_nbr)
-	{
 		pthread_mutex_init(&data->forks[i], NULL);
-	}
 	init_philo(data);
 }
