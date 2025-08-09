@@ -40,16 +40,16 @@ typedef struct s_program	t_program;
 typedef struct s_named_semaphores
 {
 	sem_t	*sem;
-	char 	*name;
+	char	*name;
 }	t_named_semaphores;
 
 typedef struct s_wait
 {
 	sem_t	*stop;
 	sem_t	*died;
-	int	 	*pids;
-	long 	pids_num;
-	bool 	stop_flag;
+	int		*pids;
+	long	pids_num;
+	bool	stop_flag;
 }	t_wait;
 
 typedef struct s_philo

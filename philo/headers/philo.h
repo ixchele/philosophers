@@ -38,33 +38,33 @@ typedef struct s_program	t_program;
 typedef struct s_philo
 {
 	pthread_t	thread_id;
-	int		 	id;
-	long	 	meals_eaten;
-	long	 	last_eating_time;
-	bool	 	is_full;
-	t_mtx	 	philo_mtx;
-	t_mtx	 	check_threads_mutex;
-	t_mtx	 	*first_fork;
-	t_mtx	 	*second_fork;
+	int			id;
+	long		meals_eaten;
+	long		last_eating_time;
+	bool		is_full;
+	t_mtx		philo_mtx;
+	t_mtx		check_threads_mutex;
+	t_mtx		*first_fork;
+	t_mtx		*second_fork;
 	t_program	*program;
 }	t_philo;
 
 struct s_program
 {
 	pthread_t	admin_thread;
-	bool	 	threads_ready;
-	bool	 	end_of_program;
-	long	 	all_full;
-	long	 	philo_nbr;
-	long	 	start_dinner;
-	long	 	time_to_eat;
-	long	 	time_to_sleep;
-	long	 	time_to_die;
-	long	 	num_of_meals;
-	t_mtx	 	data_mutex;
-	t_mtx	 	write_mutex;
-	t_mtx	 	*forks;
-	t_philo	 	*philos;
+	bool		threads_ready;
+	bool		end_of_program;
+	long		all_full;
+	long		philo_nbr;
+	long		start_dinner;
+	long		time_to_eat;
+	long		time_to_sleep;
+	long		time_to_die;
+	long		num_of_meals;
+	t_mtx		data_mutex;
+	t_mtx		write_mutex;
+	t_mtx		*forks;
+	t_philo		*philos;
 };
 
 bool	parse_args(t_program *rules, int ac, char **av);

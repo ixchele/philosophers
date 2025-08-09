@@ -38,7 +38,7 @@ void	sleep_action(t_philo *philo)
 
 void	think_action(t_philo *philo)
 {
-		print_status(philo, THINK);
-		if ((philo->program->philo_nbr % 2 != 0))
-			usleep(1000);
+	print_status(philo, THINK);
+	if ((philo->program->philo_nbr % 2 != 0))
+		usleep(1000);
 }

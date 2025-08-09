@@ -24,7 +24,14 @@ int	ft_usleep(long time)
 
 void	print_status(t_philo *philo, int state)
 {
-	long	time_passed;
+	long		time_passed;
+	static char	*messages[] = {
+		"%-6ld %d "COLOR_CYAN"has taken a fork"COLOR_RESET"\n",
+		"%-6ld %d is "COLOR_YELLOW"eating"COLOR_RESET"\n",
+		"%-6ld %d is "COLOR_BLUE"sleeping"COLOR_RESET"\n",
+		"%-6ld %d is "COLOR_GREEN"thinking"COLOR_RESET"\n",
+		"%-6ld %d "COLOR_RED"died"COLOR_RESET"\n"
+	};
 
 	sem_wait(philo->program->global_sem->sem);
 	time_passed = get_current_time() - philo->program->start_dinner;
@@ -32,16 +39,8 @@ void	print_status(t_philo *philo, int state)
 	if (read_bool(philo->meal_sem->sem, &philo->is_full) == true)
 		return ;
 	sem_wait(philo->local_sem->sem);
-	if (state == FORK && !end_of_dinner(philo->program))
-		printf("%-6ld %d has taken a fork\n", time_passed, philo->id);
-	if (state == EAT && !end_of_dinner(philo->program))
-		printf("%-6ld %d is eating\n", time_passed, philo->id);
-	if (state == SLEEP && !end_of_dinner(philo->program))
-		printf("%-6ld %d is sleeping\n", time_passed, philo->id);
-	if (state == THINK && !end_of_dinner(philo->program))
-		printf("%-6ld %d is thinking\n", time_passed, philo->id);
-	if (state == DIE)
-		printf("%-6ld %d died\n", time_passed, philo->id);
+	if (!end_of_dinner(philo->program))
+		printf(messages[state - 1], time_passed, philo->id);
 	sem_post(philo->local_sem->sem);
 }
 

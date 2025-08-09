@@ -1,6 +1,0 @@
--Wall 
--ggdb 
--Wextra 
--Werror
--std=c11 
--I./headers/

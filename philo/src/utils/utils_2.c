@@ -33,7 +33,14 @@ int	ft_usleep(long time)
 
 void	print_status(t_philo *philo, int state)
 {
-	long	time_passed;
+	long		time_passed;
+	static char	*messages[] = {
+		"%-6ld %d "COLOR_CYAN"has taken a fork"COLOR_RESET"\n",
+		"%-6ld %d is "COLOR_YELLOW"eating"COLOR_RESET"\n",
+		"%-6ld %d is "COLOR_BLUE"sleeping"COLOR_RESET"\n",
+		"%-6ld %d is "COLOR_GREEN"thinking"COLOR_RESET"\n",
+		"%-6ld %d "COLOR_RED"died"COLOR_RESET"\n"
+	};
 
 	pthread_mutex_lock(&philo->program->data_mutex);
 	time_passed = get_current_time() - philo->program->start_dinner;
@@ -41,16 +48,8 @@ void	print_status(t_philo *philo, int state)
 	if (read_bool(&philo->program->data_mutex, &philo->is_full) == true)
 		return ;
 	pthread_mutex_lock(&philo->program->write_mutex);
-	if (state == FORK && !end_of_simulation(philo->program))
-		printf("%-6ld %d has taken a fork\n", time_passed, philo->id);
-	else if (state == EAT && !end_of_simulation(philo->program))
-		printf("%-6ld %d is eating\n", time_passed, philo->id);
-	else if (state == SLEEP && !end_of_simulation(philo->program))
-		printf("%-6ld %d is sleeping\n", time_passed, philo->id);
-	else if (state == THINK && !end_of_simulation(philo->program))
-		printf("%-6ld %d is thinking\n", time_passed, philo->id);
-	else if (state == DIE)
-		printf("%-6ld %d died\n", time_passed, philo->id);
+	if (!end_of_simulation(philo->program))
+		printf(messages[state - 1], time_passed, philo->id);
 	pthread_mutex_unlock(&philo->program->write_mutex);
 }
 
